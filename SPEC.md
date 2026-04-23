@@ -11,9 +11,10 @@
 
 | 组件 | 版本 |
 |------|------|
-| Spring Boot | 3.4.1 |
-| Java | 17 |
-| Jackson | 2.x (由 Spring Boot 管理) |
+| Spring Boot | 3.4.4 |
+| Java | 25 |
+| Lombok | 1.18.40 |
+| Jackson | 由 Spring Boot 管理 |
 
 ## 3. 功能规格
 
@@ -38,8 +39,8 @@ src/main/java/wo1261931870/analysisJsonToObject/
 ├── controller/
 │   └── JsonController.java                 # REST 控制器
 ├── service/
-│   └── JsonFileService.java                 # JSON 文件解析服务
-└── jsonObject/                              # JSON 文件存放目录
+│   └── JsonFileService.java                # JSON 文件解析服务
+└── jsonObject/                             # JSON 文件存放目录
 ```
 
 ### 3.4 业务逻辑
@@ -51,26 +52,34 @@ src/main/java/wo1261931870/analysisJsonToObject/
 5. 递归遍历 JsonNode，将嵌套对象和数组转换为 Map 结构
 6. 返回包含所有 JSON 数据的 List<Map> 列表
 
-## 4. 配置信息
+## 4. 架构图
 
-- **Java 版本**: 17
+```mermaid
+graph TD
+    A[客户端] --> B[JsonController<br/>GET /api/data]
+    B --> C[JsonFileService.readJsonFiles]
+    C --> D[读取 jsonObject/ 目录]
+    D --> E[遍历 .json 文件]
+    E --> F[Jackson ObjectMapper]
+    F --> G[JsonNode 解析]
+    G --> H[递归转换为 Map&lt;String, Object&gt;]
+    H --> I[返回 List&lt;Map&gt; 数据]
+    I --> A
+```
+
+## 5. 配置信息
+
+- **Java 版本**: 25
 - **编码格式**: UTF-8
 - **端口**: 默认 8080 (Spring Boot 默认)
 
-## 5. 编译信息
+## 6. 升级记录
+
+- **2026-04-23**: 升级到 Spring Boot 3.4.4, Java 25, Lombok 1.18.40
+  - 添加 maven-compiler-plugin 注解处理器配置
+  - 添加 Lombok 依赖
+
+## 7. 编译信息
 
 - **Maven 编译**: 通过
 - **打包方式**: JAR (spring-boot-maven-plugin)
-
-## 6. README.md 状态
-
-- 存在，内容较完整，包含项目简介、架构图、核心流程
-- 需注意 pom.xml 中 maven.compiler.source/target 设置为 7，与 java.version 17 不一致（以 java.version 为准）
-
-## 7. .gitignore 状态
-
-- 存在但不够完整，缺少以下内容：
-  - Maven 标准输出目录 (target/)
-  - IDE 配置 (.idea/, *.iml)
-  - Spring Boot 打包文件 (*.jar)
-  - 日志文件 (*.log)
